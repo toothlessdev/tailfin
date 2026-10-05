@@ -6,16 +6,17 @@ import type { Task } from "../models/Task";
 export interface TaskDraft {
     readonly title: string;
     readonly description: string;
-    readonly references: readonly ExternalReference[];
+    readonly relatedReferences: readonly ExternalReference[];
 }
 
 export type Derivation =
     | { readonly kind: "ignore" }
     | { readonly kind: "create"; readonly draft: TaskDraft }
-    /** `references` are added to the task. `input`, when present, goes to its session as a follow-up. */
     | {
           readonly kind: "update";
-          readonly references?: readonly ExternalReference[];
+          /** Added to the task's related references. Empty when only `input` matters. */
+          readonly addedReferences: readonly ExternalReference[];
+          /** Goes to the task's session as a follow-up, when present. */
           readonly input?: string;
       }
     | { readonly kind: "close"; readonly reason: string };
