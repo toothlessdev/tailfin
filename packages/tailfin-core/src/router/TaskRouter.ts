@@ -5,6 +5,7 @@ import type { TaskRepository } from "../repositories/TaskRepository";
 import type { Derivation, TaskRouterRule } from "./TaskRouterRule";
 
 export interface RoutedEvent {
+    readonly event: ExternalEvent;
     readonly rule: TaskRouterRule;
     readonly derivation: Derivation;
 
@@ -30,6 +31,7 @@ export class TaskRouter {
             if (derivation.kind === "ignore") continue;
 
             return {
+                event,
                 rule,
                 derivation: await this.withStoredReferences(derivation),
                 existingTask,
