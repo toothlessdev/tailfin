@@ -13,6 +13,8 @@ export const SLACK_SOURCE_NAME = "slack";
 
 export interface SlackEventSourceConfig {
     readonly myUserId: string;
+    readonly myUserGroupIds: readonly string[];
+    readonly contextChannelIds: readonly string[];
     readonly referenceScanner: ReferenceScanner;
 }
 
@@ -46,11 +48,17 @@ export class SlackEventSource implements ExternalEventSource {
         if (message.user === this.config.myUserId) return null;
 
         const text = message.text ?? "";
+        const mentionsMe = this.mentionsMe(text);
+        const isThreadReply = message.thread_ts !== undefined;
+        const isContextChannel = this.config.contextChannelIds.includes(
+            message.channel,
+        );
+        if (!mentionsMe && !isThreadReply && !isContextChannel) return null;
 
         return new ExternalEvent({
             id: `slack:${message.channel}:${message.ts}`,
             sourceName: this.sourceName,
-            kind: "message",
+            kind: mentionsMe ? "mention" : "message",
             occurredAt: new Date(Number(message.ts) * 1000),
             references: [
                 new ExternalReference(
@@ -61,5 +69,13 @@ export class SlackEventSource implements ExternalEventSource {
             ],
             raw: message,
         });
+    }
+
+    private mentionsMe(text: string): boolean {
+        if (text.includes(`<@${this.config.myUserId}>`)) return true;
+
+        return this.config.myUserGroupIds.some((groupId) =>
+            text.includes(`<!subteam^${groupId}`),
+        );
     }
 }
