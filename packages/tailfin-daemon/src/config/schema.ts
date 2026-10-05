@@ -87,6 +87,12 @@ export const TailfinConfigSchema = z.strictObject({
                 )
                 .default([]),
             extraDeniedReadPaths: z.array(z.string().min(1)).default([]),
+            /** Where sessions run and what they can read. A folder of its own, not this repo: the database is in here. */
+            workingDirectory: z.string().min(1).default(".local/sessions"),
+            /** Inputs that failed this many times are given up on. */
+            maxAttempts: z.number().int().min(1).default(3),
+            timeoutSeconds: z.number().int().positive().default(600),
+            model: z.string().min(1).optional(),
             prompt: z
                 .strictObject({
                     start: modePromptSchema,
@@ -94,11 +100,16 @@ export const TailfinConfigSchema = z.strictObject({
                 })
                 .prefault({}),
         })
-        .transform(({ extraAllowedTools, extraDeniedReadPaths, prompt }) => ({
-            allowedTools: [...READ_ONLY_TOOLS, ...extraAllowedTools],
-            deniedReadPaths: [...PROTECTED_READ_PATHS, ...extraDeniedReadPaths],
-            prompt,
-        }))
+        .transform(
+            ({ extraAllowedTools, extraDeniedReadPaths, ...settings }) => ({
+                ...settings,
+                allowedTools: [...READ_ONLY_TOOLS, ...extraAllowedTools],
+                deniedReadPaths: [
+                    ...PROTECTED_READ_PATHS,
+                    ...extraDeniedReadPaths,
+                ],
+            }),
+        )
         .prefault({}),
 });
 

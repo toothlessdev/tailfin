@@ -2,10 +2,12 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 
 import {
+    ClaudeCli,
     ExternalEventBroker,
     ExternalEventRepository,
     ExternalReferenceRepository,
     ReferenceScanner,
+    Runner,
     SerialQueue,
     TaskInputRepository,
     TaskActionExecutor,
@@ -39,15 +41,37 @@ export async function startDaemon(
         references,
         tasks,
     );
-    const executor = new TaskActionExecutor(
-        tasks,
-        new TaskInputRepository(database),
-    );
+    const inputs = new TaskInputRepository(database);
+    const executor = new TaskActionExecutor(tasks, inputs);
     const databaseQueue = new SerialQueue();
     const broker = new ExternalEventBroker(
         new ExternalEventRepository(database),
         references,
         databaseQueue,
+    );
+
+    const { sessions } = config;
+    mkdirSync(sessions.workingDirectory, { recursive: true });
+    const runner = new Runner(
+        {
+            tasks,
+            inputs,
+            cli: new ClaudeCli(sessions.timeoutSeconds * 1000),
+            databaseQueue,
+        },
+        {
+            permissions: {
+                allowedTools: sessions.allowedTools,
+                deniedReadPaths: sessions.deniedReadPaths,
+            },
+            prompt: sessions.prompt,
+            workingDirectory: sessions.workingDirectory,
+            maxAttempts: sessions.maxAttempts,
+            model: sessions.model,
+            onBriefing: async (task, briefing) => {
+                console.log(`[briefing] task #${task.id}\n${briefing.result}`);
+            },
+        },
     );
 
     broker.consume(async (event) => {
@@ -61,7 +85,9 @@ export async function startDaemon(
             `[router] ${event.id} -> ${routed.rule.name}: ${routed.action.kind}`,
         );
         await executor.execute(routed);
+        runner.wake();
     });
+    runner.wake();
 
     // Every scanner is collected first, so each source gets all of them combined.
     const referenceScanner = ReferenceScanner.compose([
@@ -90,6 +116,7 @@ export async function startDaemon(
         async close() {
             for (const stop of stopWatching) await stop();
             await broker.idle();
+            await runner.idle();
             await database.destroy();
         },
     };
