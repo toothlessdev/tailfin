@@ -14,6 +14,7 @@ export type {
     TaskRouterRule,
 } from "./router/TaskRouterRule";
 export { TaskRouter, type RoutedEvent } from "./router/TaskRouter";
+export { ExternalEventBroker } from "./queue/ExternalEventBroker";
 
 export { ExternalEventRepository } from "./repositories/ExternalEventRepository";
 export { ExternalReferenceRepository } from "./repositories/ExternalReferenceRepository";
