@@ -15,7 +15,8 @@
         "noEmit": true,
 
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": false
+        "emitDecoratorMetadata": false,
+        "useDefineForClassFields": false
     },
     "include": ["packages/*/src", "vitest.config.ts"]
 }
