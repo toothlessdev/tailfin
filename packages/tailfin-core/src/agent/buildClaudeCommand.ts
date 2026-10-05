@@ -1,3 +1,5 @@
+import { ACTING_TOOLS } from "./policy/readOnly";
+
 export interface ReadOnlySessionPermissions {
     readonly allowedTools: readonly string[];
     readonly deniedReadPaths: readonly string[];
@@ -38,9 +40,9 @@ export function buildClaudeCommand({
             ...(permissions.allowedTools.length > 0
                 ? ["--allowedTools", ...permissions.allowedTools]
                 : []),
-            // Not allowing Bash is not enough: read-only shell commands such as `cat` still run.
+            // Leaving Bash out of the allow list is not enough: read-only shell commands such as `cat` still run.
             "--disallowedTools",
-            "Bash",
+            ...ACTING_TOOLS,
             ...permissions.deniedReadPaths.map((path) => `Read(${path})`),
         ],
         // A prompt that starts with a dash is parsed as an option, and the text is not ours to control.
