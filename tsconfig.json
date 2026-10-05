@@ -19,5 +19,10 @@
         "emitDecoratorMetadata": false,
         "useDefineForClassFields": false
     },
-    "include": ["packages/*/src", "vitest.config.ts"]
+    "include": [
+        "packages/*/src",
+        "vitest.config.ts",
+        "tailfin.config.ts",
+        "tailfin.config.example.ts"
+    ]
 }
