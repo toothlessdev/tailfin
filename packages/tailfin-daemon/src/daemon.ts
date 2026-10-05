@@ -6,6 +6,7 @@ import {
     ExternalEventRepository,
     ExternalReferenceRepository,
     ReferenceScanner,
+    SerialQueue,
     TaskInputRepository,
     TaskPipeline,
     TaskRepository,
@@ -39,9 +40,11 @@ export async function startDaemon(
         tasks,
     );
     const pipeline = new TaskPipeline(tasks, new TaskInputRepository(database));
+    const databaseQueue = new SerialQueue();
     const broker = new ExternalEventBroker(
         new ExternalEventRepository(database),
         references,
+        databaseQueue,
     );
 
     broker.consume(async (event) => {

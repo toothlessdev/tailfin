@@ -19,6 +19,7 @@ export { TaskRouter, type RoutedEvent } from "./router/TaskRouter";
 export type { ModePrompt, SessionPrompt } from "./agent/buildSessionPrompt";
 export { ACTING_TOOLS, isReadOnlyTool } from "./agent/policy/readOnly";
 export { ExternalEventBroker } from "./queue/ExternalEventBroker";
+export { SerialQueue } from "./queue/SerialQueue";
 export { TaskPipeline } from "./pipeline/TaskPipeline";
 
 export { createDataSource } from "./database/createDataSource";

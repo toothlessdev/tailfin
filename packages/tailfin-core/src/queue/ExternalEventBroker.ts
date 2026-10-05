@@ -1,22 +1,23 @@
 import type { ExternalEvent } from "../models/ExternalEvent";
 import type { ExternalEventRepository } from "../repositories/ExternalEventRepository";
 import type { ExternalReferenceRepository } from "../repositories/ExternalReferenceRepository";
+import type { SerialQueue } from "./SerialQueue";
 
 type EventHandler = (event: ExternalEvent) => Promise<void>;
 
 export class ExternalEventBroker {
     private handler: EventHandler | null = null;
-    private queue: Promise<unknown> = Promise.resolve();
     private processing: Promise<void> | null = null;
     private hasWork = false;
 
     constructor(
         private readonly events: ExternalEventRepository,
         private readonly references: ExternalReferenceRepository,
+        private readonly databaseQueue: SerialQueue,
     ) {}
 
     publish(event: ExternalEvent): Promise<void> {
-        return this.exclusive(() => this.store(event));
+        return this.databaseQueue.run(() => this.store(event));
     }
 
     consume(handler: EventHandler): void {
@@ -26,18 +27,6 @@ export class ExternalEventBroker {
 
     async idle(): Promise<void> {
         while (this.processing) await this.processing;
-    }
-
-    /**
-     * The database has one connection, so a read that lands in the middle of
-     * another operation's transaction sees half of it: an event row without its
-     * references, for one. Every database step goes through here, one at a time.
-     */
-    private exclusive<T>(step: () => Promise<T>): Promise<T> {
-        const result = this.queue.then(step);
-        this.queue = result.catch(() => undefined);
-
-        return result;
     }
 
     private async store(event: ExternalEvent): Promise<void> {
@@ -63,7 +52,7 @@ export class ExternalEventBroker {
 
                 let routedOne = true;
                 while (routedOne) {
-                    routedOne = await this.exclusive(() =>
+                    routedOne = await this.databaseQueue.run(() =>
                         this.routeOldest(handler),
                     );
                 }
