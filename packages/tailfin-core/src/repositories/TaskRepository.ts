@@ -44,6 +44,10 @@ export class TaskRepository {
             .getOne();
     }
 
+    findById(id: number): Promise<Task | null> {
+        return this.repository.findOneBy({ id });
+    }
+
     findByOriginEventId(originEventId: string): Promise<Task | null> {
         return this.repository.findOneBy({ originEventId });
     }
