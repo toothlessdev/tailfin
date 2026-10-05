@@ -7,6 +7,7 @@
         ".": "./src/index.ts"
     },
     "dependencies": {
+        "@slack/socket-mode": "^3.0.1",
         "tailfin-core": "workspace:*"
     }
 }
