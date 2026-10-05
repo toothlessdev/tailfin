@@ -1,6 +1,6 @@
-export { defineConfig, type TailfinConfig } from "./config";
+export { defineConfig } from "./config";
+export type { TailfinConfig } from "./config/schema";
 
-// Everything a tailfin.config.ts needs to write its own rules, scanners and plugins.
 export {
     ExternalEvent,
     ExternalReference,

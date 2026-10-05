@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { Task } from "tailfin-core";
 
 import { startDaemon, type RunningDaemon } from "./daemon";
-import { loadConfig } from "./loadConfig";
+import { loadConfig } from "./config/load";
 
 async function main(): Promise<void> {
     if (existsSync(".env")) process.loadEnvFile(".env");

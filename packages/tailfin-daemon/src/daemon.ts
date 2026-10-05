@@ -13,7 +13,7 @@ import {
     type StopWatching,
 } from "tailfin-core";
 
-import type { DaemonConfig } from "./config";
+import type { DaemonConfig } from "./config/schema";
 
 export interface RunningDaemon {
     readonly database: ReturnType<typeof createDataSource>;

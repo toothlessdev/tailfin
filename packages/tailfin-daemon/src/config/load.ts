@@ -3,15 +3,10 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 import { z } from "zod";
-
-import { tailfinConfigSchema, type DaemonConfig } from "./config";
+import { type DaemonConfig, TailfinConfigSchema } from "./schema";
 
 const CONFIG_FILE_NAME = "tailfin.config.ts";
 
-/**
- * Plugins read their own settings, including secrets from the environment, when
- * the config file builds them. Load `.env` before calling this.
- */
 export async function loadConfig(
     configPath = CONFIG_FILE_NAME,
 ): Promise<DaemonConfig> {
@@ -25,7 +20,9 @@ export async function loadConfig(
     const loaded = (await import(pathToFileURL(absolutePath).href)) as {
         default?: unknown;
     };
-    const result = tailfinConfigSchema.safeParse(loaded.default);
+
+    const result = TailfinConfigSchema.safeParse(loaded.default);
+
     if (!result.success) {
         throw new Error(
             `Invalid ${configPath}\n${z.prettifyError(result.error)}`,
