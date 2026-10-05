@@ -12,7 +12,10 @@
         "verbatimModuleSyntax": true,
         "isolatedModules": true,
         "skipLibCheck": true,
-        "noEmit": true
+        "noEmit": true,
+
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": false
     },
     "include": ["packages/*/src", "vitest.config.ts"]
 }
