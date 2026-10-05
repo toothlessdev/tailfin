@@ -7,6 +7,7 @@ export type {
     StopWatching,
 } from "./interfaces/ExternalEventSource";
 export { ReferenceScanner } from "./interfaces/ReferenceScanner";
+export { TailfinPlugin, type PluginContext } from "./interfaces/TailfinPlugin";
 
 export type {
     Derivation,
