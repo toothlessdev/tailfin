@@ -13,12 +13,3 @@ export class SlackMentionRule implements TaskRouterRule {
         throw new Error("Not implemented");
     }
 }
-
-export class SlackSavedMessageRule implements TaskRouterRule {
-    sourceName = "slack";
-    name = "slack.thread.saved";
-
-    derive(event: ExternalEvent, existingTask: Task | null): Derivation {
-        throw new Error("Not implemented");
-    }
-}
