@@ -33,11 +33,14 @@ export class ExternalEvent {
     receivedAt: Date;
 
     /**
-     * No cascade. Every reference must be a stored row (find or create) before
-     * the event is saved, or a new object with an existing (kind, key) breaks
-     * the unique constraint.
+     * Callers must swap in the stored row for an existing (kind, key) first, or
+     * the cascade insert breaks the unique constraint. Without the cascade
+     * TypeORM would silently drop the unsaved reference instead of failing.
      */
-    @ManyToMany(() => ExternalReference, { eager: true })
+    @ManyToMany(() => ExternalReference, {
+        eager: true,
+        cascade: ["insert"],
+    })
     @JoinTable({ name: "event_external_references" })
     references: ExternalReference[];
 
