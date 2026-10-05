@@ -12,8 +12,16 @@ import type { SlackMessage } from "./types/SlackMessage";
 export const SLACK_SOURCE_NAME = "slack";
 
 export interface SlackEventSourceConfig {
+    readonly myUserId: string;
     readonly referenceScanner: ReferenceScanner;
 }
+
+/** Edits, deletions and join notices are not original messages. */
+const KEPT_SUBTYPES = new Set<string | undefined>([
+    undefined,
+    "thread_broadcast",
+    "file_share",
+]);
 
 export class SlackEventSource implements ExternalEventSource {
     readonly sourceName = SLACK_SOURCE_NAME;
@@ -28,11 +36,15 @@ export class SlackEventSource implements ExternalEventSource {
         emitEvent: (event: ExternalEvent) => Promise<void>,
     ): Promise<StopWatching> {
         return this.client.subscribe(async (message) => {
-            await emitEvent(this.toEvent(message));
+            const event = this.toEvent(message);
+            if (event) await emitEvent(event);
         });
     }
 
-    private toEvent(message: SlackMessage): ExternalEvent {
+    private toEvent(message: SlackMessage): ExternalEvent | null {
+        if (!KEPT_SUBTYPES.has(message.subtype)) return null;
+        if (message.user === this.config.myUserId) return null;
+
         const text = message.text ?? "";
 
         return new ExternalEvent({
