@@ -43,4 +43,12 @@ export class TaskRepository {
             .addOrderBy("task.id", "DESC")
             .getOne();
     }
+
+    findByOriginEventId(originEventId: string): Promise<Task | null> {
+        return this.repository.findOneBy({ originEventId });
+    }
+
+    save(task: Task): Promise<Task> {
+        return this.repository.save(task);
+    }
 }
