@@ -26,7 +26,10 @@ export type Derivation =
  * can listen to the same source.
  */
 export interface TaskRouterRule {
-    /** @example "slack/mention" */
+    /**
+     * sourceName.referenceKind.purpose
+     * @example "slack.thread.mention"
+     */
     readonly name: string;
 
     readonly sourceName: string;
