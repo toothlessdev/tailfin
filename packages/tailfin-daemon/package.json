@@ -1,0 +1,12 @@
+{
+    "name": "tailfin-daemon",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "tailfin-core": "workspace:*",
+        "tailfin-plugin-google": "workspace:*",
+        "tailfin-plugin-jira": "workspace:*",
+        "tailfin-plugin-slack": "workspace:*"
+    }
+}

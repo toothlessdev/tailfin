@@ -1,0 +1,12 @@
+{
+    "name": "tailfin-plugin-slack",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "tailfin-core": "workspace:*"
+    }
+}
