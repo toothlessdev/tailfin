@@ -45,11 +45,13 @@ export class SlackEventSource implements ExternalEventSource {
 
     private toEvent(message: SlackMessage): ExternalEvent | null {
         if (!KEPT_SUBTYPES.has(message.subtype)) return null;
-        if (message.user === this.config.myUserId) return null;
 
         const text = message.text ?? "";
         const mentionsMe = this.mentionsMe(text);
         const isThreadReply = message.thread_ts !== undefined;
+        const isOwnMessage = message.user === this.config.myUserId;
+        if (isOwnMessage && !mentionsMe && !isThreadReply) return null;
+
         const isContextChannel = this.config.contextChannelIds.includes(
             message.channel,
         );
