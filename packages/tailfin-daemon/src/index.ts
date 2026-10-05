@@ -7,7 +7,7 @@ export {
     ReferenceScanner,
     TailfinPlugin,
     Task,
-    type Derivation,
+    type TaskAction,
     type PluginContext,
     type TaskRouterRule,
 } from "tailfin-core";

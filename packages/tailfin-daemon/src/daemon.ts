@@ -8,7 +8,7 @@ import {
     ReferenceScanner,
     SerialQueue,
     TaskInputRepository,
-    TaskPipeline,
+    TaskActionExecutor,
     TaskRepository,
     TaskRouter,
     createDataSource,
@@ -39,7 +39,10 @@ export async function startDaemon(
         references,
         tasks,
     );
-    const pipeline = new TaskPipeline(tasks, new TaskInputRepository(database));
+    const executor = new TaskActionExecutor(
+        tasks,
+        new TaskInputRepository(database),
+    );
     const databaseQueue = new SerialQueue();
     const broker = new ExternalEventBroker(
         new ExternalEventRepository(database),
@@ -55,9 +58,9 @@ export async function startDaemon(
         }
 
         console.log(
-            `[router] ${event.id} -> ${routed.rule.name}: ${routed.derivation.kind}`,
+            `[router] ${event.id} -> ${routed.rule.name}: ${routed.action.kind}`,
         );
-        await pipeline.run(routed);
+        await executor.execute(routed);
     });
 
     // Every scanner is collected first, so each source gets all of them combined.

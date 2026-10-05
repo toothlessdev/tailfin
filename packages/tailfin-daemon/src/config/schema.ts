@@ -55,9 +55,9 @@ export const TailfinConfigSchema = z.strictObject({
                 return (
                     typeof rule?.name === "string" &&
                     typeof rule.sourceName === "string" &&
-                    typeof rule.derive === "function"
+                    typeof rule.decide === "function"
                 );
-            }, "must have name, sourceName and derive()"),
+            }, "must have name, sourceName and decide()"),
         )
         .default([]),
 

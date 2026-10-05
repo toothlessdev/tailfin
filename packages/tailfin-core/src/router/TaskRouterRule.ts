@@ -8,7 +8,7 @@ export type TaskDraft = Pick<
     "title" | "description" | "relatedReferences"
 >;
 
-export type Derivation =
+export type TaskAction =
     | { readonly kind: "ignore" }
     | { readonly kind: "create"; readonly draft: TaskDraft }
     | {
@@ -30,5 +30,5 @@ export interface TaskRouterRule {
     readonly sourceName: string;
 
     /** `existingTask` is the open task whose references overlap the event's, if any. */
-    derive(event: ExternalEvent, existingTask: Task | null): Derivation;
+    decide(event: ExternalEvent, existingTask: Task | null): TaskAction;
 }

@@ -2,12 +2,12 @@ import type { ExternalEvent } from "../models/ExternalEvent";
 import type { Task } from "../models/Task";
 import type { ExternalReferenceRepository } from "../repositories/ExternalReferenceRepository";
 import type { TaskRepository } from "../repositories/TaskRepository";
-import type { Derivation, TaskRouterRule } from "./TaskRouterRule";
+import type { TaskAction, TaskRouterRule } from "./TaskRouterRule";
 
 export interface RoutedEvent {
     readonly event: ExternalEvent;
     readonly rule: TaskRouterRule;
-    readonly derivation: Derivation;
+    readonly action: TaskAction;
 
     readonly existingTask: Task | null;
 }
@@ -27,13 +27,13 @@ export class TaskRouter {
         for (const rule of this.rules) {
             if (rule.sourceName !== event.sourceName) continue;
 
-            const derivation = rule.derive(event, existingTask);
-            if (derivation.kind === "ignore") continue;
+            const action = rule.decide(event, existingTask);
+            if (action.kind === "ignore") continue;
 
             return {
                 event,
                 rule,
-                derivation: await this.withStoredReferences(derivation),
+                action: await this.withStoredReferences(action),
                 existingTask,
             };
         }
@@ -41,29 +41,29 @@ export class TaskRouter {
     }
 
     private async withStoredReferences(
-        derivation: Derivation,
-    ): Promise<Derivation> {
-        switch (derivation.kind) {
+        action: TaskAction,
+    ): Promise<TaskAction> {
+        switch (action.kind) {
             case "create":
                 return {
-                    ...derivation,
+                    ...action,
                     draft: {
-                        ...derivation.draft,
+                        ...action.draft,
                         relatedReferences:
                             await this.references.findOrCreateAll(
-                                derivation.draft.relatedReferences,
+                                action.draft.relatedReferences,
                             ),
                     },
                 };
             case "update":
                 return {
-                    ...derivation,
+                    ...action,
                     addedReferences: await this.references.findOrCreateAll(
-                        derivation.addedReferences,
+                        action.addedReferences,
                     ),
                 };
             default:
-                return derivation;
+                return action;
         }
     }
 }

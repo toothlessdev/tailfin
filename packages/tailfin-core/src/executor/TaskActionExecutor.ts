@@ -6,38 +6,47 @@ import type { TaskRepository } from "../repositories/TaskRepository";
 import type { RoutedEvent } from "../router/TaskRouter";
 import type { TaskDraft } from "../router/TaskRouterRule";
 
-export class TaskPipeline {
+export class TaskActionExecutor {
     constructor(
         private readonly tasks: TaskRepository,
         private readonly inputs: TaskInputRepository,
     ) {}
 
-    async run({ event, derivation, existingTask }: RoutedEvent): Promise<void> {
-        switch (derivation.kind) {
+    async execute({ event, action, existingTask }: RoutedEvent): Promise<void> {
+        switch (action.kind) {
             case "create":
-                await this.create(event.id, derivation.draft);
+                await this.create(event.id, action.draft);
                 return;
             case "update": {
-                const task = requireTask(existingTask, derivation.kind);
-                await this.addReferences(task, derivation.addedReferences);
-                if (derivation.input) {
-                    await this.queueInput(task, event.id, derivation.input);
+                const task = requireTask(existingTask, action.kind);
+                await this.addReferences(task, action.addedReferences);
+                if (action.input) {
+                    await this.queueInput(task, event.id, action.input);
                 }
                 return;
             }
             case "close":
-                await this.close(requireTask(existingTask, derivation.kind));
+                await this.close(requireTask(existingTask, action.kind));
                 return;
             case "ignore":
                 return;
         }
     }
 
-    /** A replayed event finds the task it already made and does nothing. */
+    /**
+     * The creating event is also queued as an input, which is what makes the runner
+     * brief the new task. A replay finds the task it already made, and queues the
+     * input again only if the first run died before doing so.
+     */
     private async create(eventId: string, draft: TaskDraft): Promise<void> {
-        if (await this.tasks.findByOriginEventId(eventId)) return;
+        let task = await this.tasks.findByOriginEventId(eventId);
+        if (!task) {
+            task = await this.tasks.save(
+                new Task({ originEventId: eventId, ...draft }),
+            );
+        }
 
-        await this.tasks.save(new Task({ originEventId: eventId, ...draft }));
+        await this.queueInput(task, eventId, draft.description);
     }
 
     private async addReferences(
@@ -73,9 +82,9 @@ export class TaskPipeline {
     }
 }
 
-function requireTask(task: Task | null, derivationKind: string): Task {
+function requireTask(task: Task | null, actionKind: string): Task {
     if (!task) {
-        throw new Error(`The ${derivationKind} derivation needs an open task`);
+        throw new Error(`The ${actionKind} action needs an open task`);
     }
     return task;
 }

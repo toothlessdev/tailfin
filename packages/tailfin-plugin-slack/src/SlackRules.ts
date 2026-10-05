@@ -1,5 +1,5 @@
 import type {
-    Derivation,
+    TaskAction,
     ExternalEvent,
     Task,
     TaskRouterRule,
@@ -15,7 +15,7 @@ export class SlackMentionRule implements TaskRouterRule {
     readonly sourceName = SLACK_SOURCE_NAME;
     readonly name = "slack.thread.mention";
 
-    derive(event: ExternalEvent, existingTask: Task | null): Derivation {
+    decide(event: ExternalEvent, existingTask: Task | null): TaskAction {
         const text = (event.raw as SlackMessage).text ?? "";
 
         if (existingTask) {

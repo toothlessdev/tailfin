@@ -14,13 +14,16 @@ export interface SessionPrompt {
     readonly resume: ModePrompt;
 }
 
-type InputText = Pick<TaskInput, "text">;
+type QueuedInput = Pick<TaskInput, "eventId" | "text">;
 
 export interface SessionPromptRequest {
     /** `start` gets the whole task, `resume` only what is new. */
     readonly mode: "start" | "resume";
-    readonly task: Pick<Task, "title" | "description" | "relatedReferences">;
-    readonly inputs: readonly InputText[];
+    readonly task: Pick<
+        Task,
+        "title" | "description" | "relatedReferences" | "originEventId"
+    >;
+    readonly inputs: readonly QueuedInput[];
     readonly prompt: SessionPrompt;
 }
 
@@ -34,7 +37,11 @@ export function buildSessionPrompt({
         throw new Error("A resumed session needs at least one new input");
     }
 
-    const inputTexts = inputs.map((input) => input.text);
+    // The event that created the task is queued as an input to start the session, but its
+    // text is already the task's description.
+    const inputTexts = inputs
+        .filter((input) => input.eventId !== task.originEventId)
+        .map((input) => input.text);
 
     if (mode === "start") {
         return StructuredPrompt.start()

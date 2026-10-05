@@ -11,7 +11,7 @@ export { ReferenceScanner } from "./interfaces/ReferenceScanner";
 export { TailfinPlugin, type PluginContext } from "./interfaces/TailfinPlugin";
 
 export type {
-    Derivation,
+    TaskAction,
     TaskDraft,
     TaskRouterRule,
 } from "./router/TaskRouterRule";
@@ -22,7 +22,7 @@ export { Runner } from "./agent/Runner";
 export { ClaudeCli } from "./agent/claude/ClaudeCli";
 export { ExternalEventBroker } from "./queue/ExternalEventBroker";
 export { SerialQueue } from "./queue/SerialQueue";
-export { TaskPipeline } from "./pipeline/TaskPipeline";
+export { TaskActionExecutor } from "./executor/TaskActionExecutor";
 
 export { createDataSource } from "./database/createDataSource";
 export { ExternalEventRepository } from "./repositories/ExternalEventRepository";
