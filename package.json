@@ -22,6 +22,9 @@
     "devDependencies": {
         "@types/node": "^26.4.1",
         "prettier": "^3.9.6",
+        "tailfin-daemon": "workspace:*",
+        "tailfin-plugin-jira": "workspace:*",
+        "tailfin-plugin-slack": "workspace:*",
         "tsx": "^4.23.13",
         "typescript": "^7.0.2",
         "vitest": "^5.0.0"

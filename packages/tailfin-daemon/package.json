@@ -3,10 +3,14 @@
     "version": "0.0.0",
     "private": true,
     "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
     "dependencies": {
         "tailfin-core": "workspace:*",
         "tailfin-plugin-google": "workspace:*",
         "tailfin-plugin-jira": "workspace:*",
-        "tailfin-plugin-slack": "workspace:*"
+        "tailfin-plugin-slack": "workspace:*",
+        "zod": "^4.5.4"
     }
 }

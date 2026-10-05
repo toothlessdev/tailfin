@@ -7,6 +7,7 @@
         ".": "./src/index.ts"
     },
     "dependencies": {
-        "tailfin-core": "workspace:*"
+        "tailfin-core": "workspace:*",
+        "zod": "^4.5.4"
     }
 }

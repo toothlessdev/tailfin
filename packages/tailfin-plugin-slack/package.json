@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "@slack/socket-mode": "^3.0.1",
-        "tailfin-core": "workspace:*"
+        "tailfin-core": "workspace:*",
+        "zod": "^4.5.4"
     }
 }

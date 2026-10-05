@@ -115,6 +115,15 @@ importers:
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
+      tailfin-daemon:
+        specifier: workspace:*
+        version: link:packages/tailfin-daemon
+      tailfin-plugin-jira:
+        specifier: workspace:*
+        version: link:packages/tailfin-plugin-jira
+      tailfin-plugin-slack:
+        specifier: workspace:*
+        version: link:packages/tailfin-plugin-slack
       tsx:
         specifier: ^4.23.13
         version: 4.23.13
@@ -155,6 +164,9 @@ importers:
       tailfin-plugin-slack:
         specifier: workspace:*
         version: link:../tailfin-plugin-slack
+      zod:
+        specifier: ^4.5.4
+        version: 4.5.4
 
   packages/tailfin-plugin-google:
     dependencies:
@@ -167,6 +179,9 @@ importers:
       tailfin-core:
         specifier: workspace:*
         version: link:../tailfin-core
+      zod:
+        specifier: ^4.5.4
+        version: 4.5.4
 
   packages/tailfin-plugin-slack:
     dependencies:
@@ -176,6 +191,9 @@ importers:
       tailfin-core:
         specifier: workspace:*
         version: link:../tailfin-core
+      zod:
+        specifier: ^4.5.4
+        version: 4.5.4
 
 packages:
 
@@ -1080,6 +1098,9 @@ packages:
     resolution: {integrity: sha512-2rAgRKu54VsHkqI0/tYkmluGXHD4KW7yZoycuqDQ15QOTnc2VVfy0nN/1eMhnQLO00A+dwtK20xuCnc1YGeUyg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=23}
 
+  zod@4.5.4:
+    resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
+
 snapshots:
 
   '@esbuild/aix-ppc64@0.28.2':
@@ -1681,3 +1702,5 @@ snapshots:
       string-width: 8.2.2
       y18n: 5.0.8
       yargs-parser: 22.0.0
+
+  zod@4.5.4: {}
