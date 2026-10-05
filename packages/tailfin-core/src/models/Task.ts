@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import {
     Column,
     CreateDateColumn,
@@ -39,6 +41,13 @@ export class Task {
     @Column({ type: "text", nullable: true })
     originEventId: string | null;
 
+    /**
+     * Chosen with the task, so the id is known before any session exists.
+     * `null` only for rows saved before this column was added.
+     */
+    @Column({ type: "text", nullable: true })
+    sessionId: string | null;
+
     @CreateDateColumn({ type: "datetime" })
     createdAt: Date;
 
@@ -51,6 +60,7 @@ export class Task {
     ) {
         this.status = "open";
         this.originEventId = null;
+        this.sessionId = randomUUID();
         Object.assign(this, fields);
     }
 }
