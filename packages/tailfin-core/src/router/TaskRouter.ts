@@ -37,9 +37,39 @@ export class TaskRouter {
             const derivation = rule.derive(event, existingTask);
             if (derivation.kind === "ignore") continue;
 
-            return { rule, derivation, existingTask };
+            return {
+                rule,
+                derivation: await this.withStoredReferences(derivation),
+                existingTask,
+            };
         }
         return null;
+    }
+
+    private async withStoredReferences(
+        derivation: Derivation,
+    ): Promise<Derivation> {
+        switch (derivation.kind) {
+            case "create":
+                return {
+                    ...derivation,
+                    draft: {
+                        ...derivation.draft,
+                        relatedReferences: await this.storedReferencesOf(
+                            derivation.draft.relatedReferences,
+                        ),
+                    },
+                };
+            case "update":
+                return {
+                    ...derivation,
+                    addedReferences: await this.storedReferencesOf(
+                        derivation.addedReferences,
+                    ),
+                };
+            default:
+                return derivation;
+        }
     }
 
     /**
