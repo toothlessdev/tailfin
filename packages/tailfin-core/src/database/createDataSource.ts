@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 import { ExternalEvent } from "../models/ExternalEvent";
 import { ExternalReference } from "../models/ExternalReference";
 import { Task } from "../models/Task";
+import { TaskInput } from "../models/TaskInput";
 
 /**
  * `synchronize` reshapes the tables to match the entities on every start. That
@@ -13,7 +14,7 @@ export function createDataSource(databasePath: string): DataSource {
     return new DataSource({
         type: "better-sqlite3",
         database: databasePath,
-        entities: [ExternalEvent, ExternalReference, Task],
+        entities: [ExternalEvent, ExternalReference, Task, TaskInput],
         synchronize: true,
     });
 }

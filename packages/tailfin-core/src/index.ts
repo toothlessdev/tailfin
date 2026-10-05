@@ -1,6 +1,7 @@
 export { ExternalEvent } from "./models/ExternalEvent";
 export { ExternalReference } from "./models/ExternalReference";
 export { Task, type TaskStatus } from "./models/Task";
+export { TaskInput } from "./models/TaskInput";
 
 export type {
     ExternalEventSource,
@@ -21,4 +22,5 @@ export { TaskPipeline } from "./pipeline/TaskPipeline";
 export { createDataSource } from "./database/createDataSource";
 export { ExternalEventRepository } from "./repositories/ExternalEventRepository";
 export { ExternalReferenceRepository } from "./repositories/ExternalReferenceRepository";
+export { TaskInputRepository } from "./repositories/TaskInputRepository";
 export { TaskRepository } from "./repositories/TaskRepository";
