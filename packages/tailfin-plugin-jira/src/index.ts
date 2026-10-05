@@ -1,1 +1,1 @@
-export { JiraReferenceScanner } from "./JiraReferenceScanner";
+export { JiraReferenceScanner } from "./utils/JiraReferenceScanner";
