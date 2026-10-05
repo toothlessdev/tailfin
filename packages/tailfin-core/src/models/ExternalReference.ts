@@ -15,10 +15,10 @@ export class ExternalReference {
     id!: number;
 
     @Column({ type: "text" })
-    kind!: string;
+    kind: string;
 
     @Column({ type: "text" })
-    key!: string;
+    key: string;
 
     /** TypeORM calls this with no arguments when loading rows, then overwrites the fields. */
     constructor(kind: string, key: string) {
