@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "build": "tsc -b",
+        "start": "tsx packages/tailfin-daemon/src/main.ts",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
         "test:watch": "vitest",
