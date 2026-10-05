@@ -1,6 +1,6 @@
 export { ExternalEvent } from "./models/ExternalEvent";
 export { ExternalReference } from "./models/ExternalReference";
-export type { Task } from "./models/Task";
+export { Task, type TaskStatus } from "./models/Task";
 
 export type {
     ExternalEventSource,
