@@ -12,7 +12,11 @@ export class SlackClient {
     private readonly socketModeClient: SocketModeClient;
 
     constructor(appToken: string) {
-        this.socketModeClient = new SocketModeClient({ appToken });
+        this.socketModeClient = new SocketModeClient({
+            appToken,
+            // The default 5s wait for a pong drops the connection on a slow network, and events sent meanwhile are lost.
+            clientPingTimeout: 30_000,
+        });
     }
 
     async subscribe(
