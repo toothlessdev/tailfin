@@ -3,11 +3,10 @@ import type { ExternalReference } from "../models/ExternalReference";
 import type { Task } from "../models/Task";
 
 /** What a rule fills in to request a new task. The daemon assigns id, status and timestamps. */
-export interface TaskDraft {
-    readonly title: string;
-    readonly description: string;
-    readonly relatedReferences: readonly ExternalReference[];
-}
+export type TaskDraft = Pick<
+    Task,
+    "title" | "description" | "relatedReferences"
+>;
 
 export type Derivation =
     | { readonly kind: "ignore" }
@@ -21,11 +20,6 @@ export type Derivation =
       }
     | { readonly kind: "close"; readonly reason: string };
 
-/**
- * Decides what to do with events from one source (a mention, a saved message,
- * a review request). The router receives rules by injection and several rules
- * can listen to the same source.
- */
 export interface TaskRouterRule {
     /**
      * sourceName.referenceKind.purpose
