@@ -1,5 +1,7 @@
 import {
+    ACTING_TOOLS,
     TailfinPlugin,
+    isReadOnlyTool,
     type ReferenceScanner,
     type TaskRouterRule,
 } from "tailfin-core";
@@ -7,23 +9,6 @@ import {
 import { z } from "zod";
 
 const READ_ONLY_TOOLS = ["Read", "Grep", "Glob"];
-
-/** Tools that write or run commands, so a session must never be given them. */
-const ACTING_TOOL_PATTERN = /^(Bash|Write|Edit|NotebookEdit)(\(|$)/;
-
-/**
- * A fetch to any host can carry data out in the URL, so it is only allowed for one named host.
- * `WebSearch` stays allowed but is not a default: every query leaves the company.
- */
-const WEB_FETCH_PATTERN = /^WebFetch(\(|$)/;
-const SINGLE_HOST_WEB_FETCH_PATTERN = /^WebFetch\(domain:[^*()\s]+\)$/;
-
-function isReadOnlyTool(tool: string): boolean {
-    if (WEB_FETCH_PATTERN.test(tool)) {
-        return SINGLE_HOST_WEB_FETCH_PATTERN.test(tool);
-    }
-    return !ACTING_TOOL_PATTERN.test(tool);
-}
 
 /**
  * Sessions read text that other people wrote, so reading must not reach secrets.
@@ -41,6 +26,15 @@ const PROTECTED_READ_PATHS = [
     "~/.npmrc",
     "~/.netrc",
 ];
+
+const modePromptSchema = z
+    .strictObject({
+        /** Asked last. Empty by default: the user decides what to ask and in which language. */
+        request: z.string().default(""),
+        /** Trusted lines placed after the fixed rules, which the config cannot replace. */
+        extraInstructions: z.array(z.string().min(1)).default([]),
+    })
+    .prefault({});
 
 export const TailfinConfigSchema = z.strictObject({
     database: z.string().default(".local/tailfin.sqlite"),
@@ -88,15 +82,22 @@ export const TailfinConfigSchema = z.strictObject({
                         .min(1)
                         .refine(
                             isReadOnlyTool,
-                            "sessions are read-only: Bash, Write, Edit and NotebookEdit cannot be allowed, and WebFetch needs one host like WebFetch(domain:docs.example.com)",
+                            `sessions are read-only: ${ACTING_TOOLS.join(", ")} cannot be allowed, and WebFetch needs one host like WebFetch(domain:docs.example.com)`,
                         ),
                 )
                 .default([]),
             extraDeniedReadPaths: z.array(z.string().min(1)).default([]),
+            prompt: z
+                .strictObject({
+                    start: modePromptSchema,
+                    resume: modePromptSchema,
+                })
+                .prefault({}),
         })
-        .transform(({ extraAllowedTools, extraDeniedReadPaths }) => ({
+        .transform(({ extraAllowedTools, extraDeniedReadPaths, prompt }) => ({
             allowedTools: [...READ_ONLY_TOOLS, ...extraAllowedTools],
             deniedReadPaths: [...PROTECTED_READ_PATHS, ...extraDeniedReadPaths],
+            prompt,
         }))
         .prefault({}),
 });
