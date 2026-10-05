@@ -1,0 +1,4 @@
+{
+    "description": "The tailfin mod: lists briefed tasks and reopens their sessions in Desktop",
+    "modules": ["../mod/register.js"]
+}
