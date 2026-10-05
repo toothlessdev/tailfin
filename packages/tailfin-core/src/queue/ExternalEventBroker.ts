@@ -27,6 +27,10 @@ export class ExternalEventBroker {
         this.wake();
     }
 
+    async idle(): Promise<void> {
+        while (this.processing) await this.processing;
+    }
+
     private async store(event: ExternalEvent): Promise<void> {
         event.references = await this.references.findOrCreateAll(
             event.references,
