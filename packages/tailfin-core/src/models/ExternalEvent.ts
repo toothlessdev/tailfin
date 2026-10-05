@@ -38,7 +38,12 @@ export class ExternalEvent {
     @Column({ type: "simple-json" })
     raw: unknown;
 
-    constructor(fields: Omit<ExternalEvent, "receivedAt">) {
+    /** Set once routing finished. Events still `null` after a restart are routed again. */
+    @Column({ type: "datetime", nullable: true })
+    routedAt: Date | null;
+
+    constructor(fields: Omit<ExternalEvent, "receivedAt" | "routedAt">) {
+        this.routedAt = null;
         Object.assign(this, fields);
     }
 }
