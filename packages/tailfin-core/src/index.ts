@@ -17,6 +17,7 @@ export { TaskRouter, type RoutedEvent } from "./router/TaskRouter";
 export { ExternalEventBroker } from "./queue/ExternalEventBroker";
 export { TaskPipeline } from "./pipeline/TaskPipeline";
 
+export { createDataSource } from "./database/createDataSource";
 export { ExternalEventRepository } from "./repositories/ExternalEventRepository";
 export { ExternalReferenceRepository } from "./repositories/ExternalReferenceRepository";
 export { TaskRepository } from "./repositories/TaskRepository";
