@@ -13,3 +13,8 @@ export type {
     TaskDraft,
     TaskRouterRule,
 } from "./router/TaskRouterRule";
+export { TaskRouter, type RoutedEvent } from "./router/TaskRouter";
+
+export { ExternalEventRepository } from "./repositories/ExternalEventRepository";
+export { ExternalReferenceRepository } from "./repositories/ExternalReferenceRepository";
+export { TaskRepository } from "./repositories/TaskRepository";
