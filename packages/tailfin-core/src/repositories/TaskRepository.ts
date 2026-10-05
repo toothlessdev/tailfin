@@ -48,8 +48,30 @@ export class TaskRepository {
         return this.repository.findOneBy({ id });
     }
 
+    findOpen(): Promise<Task[]> {
+        return this.repository.find({
+            where: { status: "open" },
+            order: { createdAt: "DESC", id: "DESC" },
+        });
+    }
+
+    findRecentlyDone(limit: number): Promise<Task[]> {
+        return this.repository.find({
+            where: { status: "done" },
+            order: { updatedAt: "DESC", id: "DESC" },
+            take: limit,
+        });
+    }
+
     findByOriginEventId(originEventId: string): Promise<Task | null> {
         return this.repository.findOneBy({ originEventId });
+    }
+
+    async recordBriefing(taskId: number, briefing: string): Promise<void> {
+        await this.repository.update(
+            { id: taskId },
+            { briefing, briefedAt: new Date() },
+        );
     }
 
     save(task: Task): Promise<Task> {

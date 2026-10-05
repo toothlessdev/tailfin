@@ -48,6 +48,13 @@ export class Task {
     @Column({ type: "text", nullable: true })
     sessionId: string | null;
 
+    /** The session's latest answer, kept so the inbox can show it without opening the session. */
+    @Column({ type: "text", nullable: true })
+    briefing: string | null;
+
+    @Column({ type: "datetime", nullable: true })
+    briefedAt: Date | null;
+
     @CreateDateColumn({ type: "datetime" })
     createdAt: Date;
 
@@ -61,6 +68,8 @@ export class Task {
         this.status = "open";
         this.originEventId = null;
         this.sessionId = randomUUID();
+        this.briefing = null;
+        this.briefedAt = null;
         Object.assign(this, fields);
     }
 }

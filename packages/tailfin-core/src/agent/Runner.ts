@@ -115,9 +115,13 @@ export class Runner {
             return;
         }
 
-        await this.databaseQueue.run(() =>
-            this.dependencies.inputs.markDelivered(inputIds),
-        );
+        await this.databaseQueue.run(async () => {
+            await this.dependencies.tasks.recordBriefing(
+                taskId,
+                briefing.result,
+            );
+            await this.dependencies.inputs.markDelivered(inputIds);
+        });
         await this.deliverBriefing(work.task, briefing);
     }
 
