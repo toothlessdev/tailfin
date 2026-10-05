@@ -1,23 +1,30 @@
 import type { ExternalReference } from "../models/ExternalReference";
 import { Task } from "../models/Task";
+import { TaskInput } from "../models/TaskInput";
+import type { TaskInputRepository } from "../repositories/TaskInputRepository";
 import type { TaskRepository } from "../repositories/TaskRepository";
 import type { RoutedEvent } from "../router/TaskRouter";
 import type { TaskDraft } from "../router/TaskRouterRule";
 
 export class TaskPipeline {
-    constructor(private readonly tasks: TaskRepository) {}
+    constructor(
+        private readonly tasks: TaskRepository,
+        private readonly inputs: TaskInputRepository,
+    ) {}
 
     async run({ event, derivation, existingTask }: RoutedEvent): Promise<void> {
         switch (derivation.kind) {
             case "create":
                 await this.create(event.id, derivation.draft);
                 return;
-            case "update":
-                await this.addReferences(
-                    requireTask(existingTask, derivation.kind),
-                    derivation.addedReferences,
-                );
+            case "update": {
+                const task = requireTask(existingTask, derivation.kind);
+                await this.addReferences(task, derivation.addedReferences);
+                if (derivation.input) {
+                    await this.queueInput(task, event.id, derivation.input);
+                }
                 return;
+            }
             case "close":
                 await this.close(requireTask(existingTask, derivation.kind));
                 return;
@@ -47,6 +54,17 @@ export class TaskPipeline {
 
         task.relatedReferences = [...task.relatedReferences, ...newReferences];
         await this.tasks.save(task);
+    }
+
+    /** A replayed event finds the input it already queued and does nothing. */
+    private async queueInput(
+        task: Task,
+        eventId: string,
+        text: string,
+    ): Promise<void> {
+        await this.inputs.saveIfNew(
+            new TaskInput({ taskId: task.id, eventId, text }),
+        );
     }
 
     private async close(task: Task): Promise<void> {
