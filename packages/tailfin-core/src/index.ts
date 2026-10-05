@@ -6,11 +6,10 @@ export type {
     ExternalEventSource,
     StopWatching,
 } from "./interfaces/ExternalEventSource";
+export type { ReferenceExtractor } from "./interfaces/ReferenceExtractor";
 
 export type {
     Derivation,
     TaskDraft,
     TaskRouterRule,
 } from "./router/TaskRouterRule";
-
-export { referencesFromText } from "./utils/referencesFromText";
