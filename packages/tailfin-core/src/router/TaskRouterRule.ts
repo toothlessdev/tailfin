@@ -2,7 +2,7 @@ import type { ExternalEvent } from "../models/ExternalEvent";
 import type { ExternalReference } from "../models/ExternalReference";
 import type { Task } from "../models/Task";
 
-/** What an intake fills in to request a new task. The daemon assigns id, status and timestamps. */
+/** What a rule fills in to request a new task. The daemon assigns id, status and timestamps. */
 export interface TaskDraft {
     readonly title: string;
     readonly description: string;
@@ -21,10 +21,11 @@ export type Derivation =
     | { readonly kind: "close"; readonly reason: string };
 
 /**
- * One way of working on events from one source (a mention, a saved message,
- * a review request). Several intakes can listen to the same source.
+ * Decides what to do with events from one source (a mention, a saved message,
+ * a review request). The router receives rules by injection and several rules
+ * can listen to the same source.
  */
-export interface EventIntake {
+export interface TaskRouterRule {
     /** @example "slack/mention" */
     readonly name: string;
 
