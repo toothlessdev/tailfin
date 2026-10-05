@@ -16,6 +16,7 @@ export type {
     TaskRouterRule,
 } from "./router/TaskRouterRule";
 export { TaskRouter, type RoutedEvent } from "./router/TaskRouter";
+export type { ModePrompt, SessionPrompt } from "./agent/buildSessionPrompt";
 export { ACTING_TOOLS, isReadOnlyTool } from "./agent/policy/readOnly";
 export { ExternalEventBroker } from "./queue/ExternalEventBroker";
 export { TaskPipeline } from "./pipeline/TaskPipeline";
