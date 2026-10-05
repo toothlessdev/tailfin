@@ -6,7 +6,7 @@ export type {
     ExternalEventSource,
     StopWatching,
 } from "./interfaces/ExternalEventSource";
-export type { ReferenceExtractor } from "./interfaces/ReferenceExtractor";
+export { ReferenceScanner } from "./interfaces/ReferenceScanner";
 
 export type {
     Derivation,
