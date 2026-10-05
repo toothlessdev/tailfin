@@ -12,10 +12,4 @@ export class SlackEventSource implements ExternalEventSource {
     ): Promise<StopWatching> {
         throw new Error("Method not implemented.");
     }
-
-    async pull(
-        cursor: string | null,
-    ): Promise<{ events: readonly ExternalEvent[]; cursor: string }> {
-        throw new Error("Method not implemented.");
-    }
 }
