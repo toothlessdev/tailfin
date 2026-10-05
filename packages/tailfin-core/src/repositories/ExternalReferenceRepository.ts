@@ -19,4 +19,21 @@ export class ExternalReferenceRepository {
 
         return this.repository.findOneByOrFail({ kind, key });
     }
+
+    async findOrCreateAll(
+        references: readonly ExternalReference[],
+    ): Promise<ExternalReference[]> {
+        const referenceByKindAndKey = new Map(
+            references.map((reference) => [
+                JSON.stringify([reference.kind, reference.key]),
+                reference,
+            ]),
+        );
+
+        const stored: ExternalReference[] = [];
+        for (const { kind, key } of referenceByKindAndKey.values()) {
+            stored.push(await this.findOrCreate(kind, key));
+        }
+        return stored;
+    }
 }
