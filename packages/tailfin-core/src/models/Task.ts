@@ -2,9 +2,10 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    Index,
     JoinTable,
     ManyToMany,
-    PrimaryColumn,
+    PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
 
@@ -14,9 +15,8 @@ export type TaskStatus = "open" | "done" | "dismissed";
 
 @Entity({ name: "tasks" })
 export class Task {
-    /** @example "TASK-0123" */
-    @PrimaryColumn({ type: "text" })
-    id: string;
+    @PrimaryGeneratedColumn("increment")
+    id: number;
 
     @Column({ type: "text" })
     title: string;
@@ -31,6 +31,14 @@ export class Task {
     @JoinTable({ name: "task_external_references" })
     relatedReferences: ExternalReference[];
 
+    /**
+     * The event that created the task.
+     * Unique, so replaying a `create` cannot make a second task.
+     */
+    @Index({ unique: true })
+    @Column({ type: "text", nullable: true })
+    originEventId: string | null;
+
     @CreateDateColumn({ type: "datetime" })
     createdAt: Date;
 
@@ -38,12 +46,11 @@ export class Task {
     updatedAt: Date;
 
     constructor(
-        fields: Pick<
-            Task,
-            "id" | "title" | "description" | "relatedReferences"
-        >,
+        fields: Pick<Task, "title" | "description" | "relatedReferences"> &
+            Partial<Pick<Task, "originEventId">>,
     ) {
         this.status = "open";
+        this.originEventId = null;
         Object.assign(this, fields);
     }
 }
