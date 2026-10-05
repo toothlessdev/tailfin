@@ -1,0 +1,16 @@
+{
+    "name": "tailfin",
+    "owner": {
+        "name": "toothlessdev"
+    },
+    "metadata": {
+        "description": "Claude Code extensions for the tailfin personal work assistant"
+    },
+    "plugins": [
+        {
+            "name": "tailfin",
+            "source": "./plugins",
+            "description": "Skills, mods, and hooks for working with tailfin sessions and tasks inside Claude Code"
+        }
+    ]
+}

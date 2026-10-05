@@ -1,0 +1,8 @@
+{
+    "name": "tailfin",
+    "version": "0.0.0",
+    "description": "Skills, mods, and hooks for working with tailfin sessions and tasks inside Claude Code",
+    "author": {
+        "name": "toothlessdev"
+    }
+}
