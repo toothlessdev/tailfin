@@ -10,10 +10,6 @@ import {
 
 import { ExternalReference } from "./ExternalReference";
 
-/**
- * A fact that happened in an external system. The source decides `id`, so a
- * redelivered event is recognised by it.
- */
 @Entity({ name: "external_events" })
 export class ExternalEvent {
     @PrimaryColumn({ type: "text" })
@@ -32,11 +28,6 @@ export class ExternalEvent {
     @CreateDateColumn({ type: "datetime" })
     receivedAt: Date;
 
-    /**
-     * Callers must swap in the stored row for an existing (kind, key) first, or
-     * the cascade insert breaks the unique constraint. Without the cascade
-     * TypeORM would silently drop the unsaved reference instead of failing.
-     */
     @ManyToMany(() => ExternalReference, {
         eager: true,
         cascade: ["insert"],
@@ -44,9 +35,8 @@ export class ExternalEvent {
     @JoinTable({ name: "event_external_references" })
     references: ExternalReference[];
 
-    /** Raw JSON from the source. */
     @Column({ type: "simple-json" })
-    payload: unknown;
+    raw: unknown;
 
     constructor(fields: Omit<ExternalEvent, "receivedAt">) {
         Object.assign(this, fields);
