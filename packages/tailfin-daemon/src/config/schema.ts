@@ -111,6 +111,13 @@ export const TailfinConfigSchema = z.strictObject({
             }),
         )
         .prefault({}),
+
+    /** The task list the Claude Code mod reads. Listens on loopback only. */
+    server: z
+        .strictObject({
+            port: z.number().int().min(1024).max(65535).default(7421),
+        })
+        .prefault({}),
 });
 
 /** What `tailfin.config.ts` exports. Secrets such as tokens stay in `.env`. */

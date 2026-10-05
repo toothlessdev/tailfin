@@ -18,6 +18,7 @@ import {
 } from "tailfin-core";
 
 import type { DaemonConfig } from "./config/schema";
+import { InboxServer } from "./server/InboxServer";
 
 export interface RunningDaemon {
     readonly database: ReturnType<typeof createDataSource>;
@@ -74,6 +75,15 @@ export async function startDaemon(
         },
     );
 
+    const inboxServer = new InboxServer(tasks, databaseQueue, {
+        port: config.server.port,
+        workingDirectory: sessions.workingDirectory,
+    });
+    await inboxServer.listen();
+    console.log(
+        `[server] inbox on http://127.0.0.1:${config.server.port}/tasks`,
+    );
+
     broker.consume(async (event) => {
         const routed = await router.route(event);
         if (!routed) {
@@ -117,6 +127,7 @@ export async function startDaemon(
             for (const stop of stopWatching) await stop();
             await broker.idle();
             await runner.idle();
+            await inboxServer.close();
             await database.destroy();
         },
     };
