@@ -12,3 +12,5 @@ export type {
     TaskDraft,
     TaskRouterRule,
 } from "./router/TaskRouterRule";
+
+export { referencesFromText } from "./utils/referencesFromText";
