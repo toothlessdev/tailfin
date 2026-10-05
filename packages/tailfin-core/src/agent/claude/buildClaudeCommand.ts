@@ -1,4 +1,4 @@
-import { ACTING_TOOLS } from "./policy/readOnly";
+import { ACTING_TOOLS } from "../policy/readOnly";
 
 export interface ReadOnlySessionPermissions {
     readonly allowedTools: readonly string[];
