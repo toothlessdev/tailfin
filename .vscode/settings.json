@@ -1,3 +1,9 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "intellij.projects": [
+        {
+            "type": "gradle",
+            "path": "file:///$PROJECT_DIR$/tailfin-server/build.gradle"
+        }
+    ]
 }
