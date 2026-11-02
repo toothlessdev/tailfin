@@ -1,0 +1,14 @@
+spring:
+    application:
+        name: tailfin-server
+    datasource:
+        url: jdbc:h2:file:./.data/tailfin
+        username: sa
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        open-in-view: false
+
+server:
+    address: 127.0.0.1
+    port: 7421
